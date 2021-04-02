@@ -1,0 +1,17 @@
+{
+  "name": "guessing-game",
+  "version": "1.0.0",
+  "description": "The simple guessing game",
+  "author": "Tatpol Samakpong",
+  "main": "app.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon -L --watch . --ext js app.js"
+  },
+  "dependencies": {
+    "assert": "^2.0.0",
+    "express": "^4.16.1",
+    "mongodb": "^3.6.4",
+    "nodemon": "^2.0.7",
+    "redis": "^3.0.2"
+  }
+}

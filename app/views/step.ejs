@@ -1,26 +1,43 @@
 <% if (step == 1) { %>
-<h1>Please enter alphabet for guessing.</h1>
 
-<div class="letters">
-  <% guessingLetters.forEach(letter => { %>
-  <span class="letter"><%= letter %></span>
-  <% }) %>
+<div
+  class="d-flex flex-column align-items-center justify-content-around"
+  style="min-height: 100vh"
+>
+  <h1 class="text-center">Enter the alphabet for guessing.</h1>
+
+  <div>
+    <% guessingLetters.forEach((letter, index) => { %>
+    <span
+      class="p-4 mx-2 rounded shadow<% if (index == guessIndex && letter === '_') { %> bg-secondary text-light <% } else if (letter === '_') { %> bg-light <% } else { %> bg-dark text-light <% } %>"
+      style="font-size: 3rem"
+      ><%= letter %></span
+    >
+    <% }) %>
+  </div>
+
+  <% if (guessingLetters.includes('_')) { %>
+
+  <form method="POST" action="/step1">
+    <% letters.forEach(letter => { %>
+    <button
+      class="btn btn-lg btn-light shadow"
+      type="submit"
+      name="guess"
+      value="<%= letter %>"
+    >
+      <%= letter %>
+    </button>
+    <% }) %>
+  </form>
 </div>
-
-<% if (guessingLetters.includes('_')) { %>
-
-<form method="POST" action="/step1">
-  <% letters.forEach(letter => { %>
-  <button type="submit" name="guess" value="<%= letter %>">
-    <%= letter %>
-  </button>
-  <% }) %>
-</form>
 
 <% } else { %>
 
-<a href="/step2">Let's Guess!</a>
-<a href="/reset">Reset</a>
+<div class="d-flex flex-column align-items-center">
+  <a class="btn btn-lg btn-info mb-3" href="/step2">Let's Guess!</a>
+  <a class="btn btn-warning" href="/reset">Reset</a>
+</div>
 
 <% } %> <% } else if (step == 2) { %>
 

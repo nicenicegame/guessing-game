@@ -1,5 +1,4 @@
 const express = require('express')
-const { letterStyle, buttonStyle } = require('./styles')
 const { initGame, resetGame } = require('./util')
 
 const gameRoute = express.Router()
@@ -11,10 +10,15 @@ gameRoute.get('/', (req, res) => {
 })
 
 gameRoute.get('/step:stepNumber', async (req, res) => {
+  let game
   const step = req.params.stepNumber
-
   const db = req.app.locals.db
-  const game = await db.collection('game').findOne()
+
+  try {
+    game = await db.collection('game').findOne()
+  } catch {
+    console.log('Error occurred while starting.')
+  }
 
   if (!game) {
     initGame(db)
@@ -27,8 +31,14 @@ gameRoute.get('/step:stepNumber', async (req, res) => {
     game.letter3,
     game.letter4,
   ]
+  const guessIndex = game.guessIndex
 
-  res.render('step', { step, guessingLetters, letters })
+  res.render('step', {
+    step,
+    guessingLetters,
+    letters,
+    guessIndex,
+  })
 })
 
 gameRoute.post('/step:stepNumber', async (req, res) => {

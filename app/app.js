@@ -1,6 +1,7 @@
 'use strict'
 // Packages.
 const express = require('express')
+const expressLayouts = require('express-ejs-layouts')
 const MongoClient = require('mongodb').MongoClient
 const redis = require('redis')
 const gameRouter = require('./gameRouter')
@@ -15,6 +16,7 @@ const dbName = 'guessingGame' // MongoDB's Database Name
 const app = express()
 
 app.set('view engine', 'ejs')
+app.use(expressLayouts)
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/', gameRouter)

@@ -1,5 +1,10 @@
 const express = require('express')
-const { initGame, resetGame } = require('./util')
+const {
+  initGame,
+  resetGame,
+  getGuessLetters,
+  getSecretLetters,
+} = require('./util')
 
 const gameRoute = express.Router()
 
@@ -25,43 +30,58 @@ gameRoute.get('/step:stepNumber', async (req, res) => {
     res.redirect('/step1')
   }
 
-  const guessingLetters = [
-    game.letter1,
-    game.letter2,
-    game.letter3,
-    game.letter4,
-  ]
-  const guessIndex = game.guessIndex
+  const secretLetters = getSecretLetters(game)
+  const guessLetters = getGuessLetters(game)
 
   res.render('step', {
     step,
-    guessingLetters,
     letters,
-    guessIndex,
+    game,
+    secretLetters,
+    guessLetters,
   })
 })
 
 gameRoute.post('/step:stepNumber', async (req, res) => {
   const step = req.params.stepNumber
   const db = req.app.locals.db
+  const value = req.body.guess
+  const game = await db.collection('game').findOne()
+  const secretLetters = getSecretLetters(game)
 
   if (step == 1) {
-    const value = req.body.guess
-    let guessIndex = null
-
-    const game = await db.collection('game').findOne()
-    guessIndex = game.guessIndex
-
-    const letterIndex = `letter${guessIndex + 1}`
+    const secretNumber = `secret${game.secretIndex + 1}`
 
     await db
       .collection('game')
       .updateOne(
-        { [letterIndex]: '_' },
-        { $set: { [letterIndex]: value, guessIndex: guessIndex + 1 } }
+        {},
+        { $set: { [secretNumber]: value, secretIndex: game.secretIndex + 1 } }
       )
     res.redirect('/step1')
   } else if (step == 2) {
+    const guessNumber = `guess${game.guessIndex + 1}`
+
+    if (value === secretLetters[game.guessIndex]) {
+      await db
+        .collection('game')
+        .updateOne(
+          {},
+          {
+            $set: {
+              [guessNumber]: value,
+              guessIndex: game.guessIndex + 1,
+              correct: true,
+            },
+          }
+        )
+    } else {
+      await db
+        .collection('game')
+        .updateOne({}, { $set: { count: game.count + 1, correct: false } })
+    }
+
+    res.redirect('/step2')
   }
 })
 

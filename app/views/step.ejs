@@ -1,0 +1,32 @@
+<% if (step == 1) { %>
+<h1>Please enter alphabet for guessing.</h1>
+
+<div class="letters">
+  <% guessingLetters.forEach(letter => { %>
+  <span class="letter"><%= letter %></span>
+  <% }) %>
+</div>
+
+<% if (guessingLetters.includes('_')) { %>
+
+<form method="POST" action="/step1">
+  <% letters.forEach(letter => { %>
+  <button type="submit" name="guess" value="<%= letter %>">
+    <%= letter %>
+  </button>
+  <% }) %>
+</form>
+
+<% } else { %>
+
+<a href="/step2">Let's Guess!</a>
+<a href="/reset">Reset</a>
+
+<% } %> <% } else if (step == 2) { %>
+
+<h1>Guess...</h1>
+<p></p>
+<form method="POST" action="/step2"></form>
+<a href="/step1">Back</a>
+
+<% } %>

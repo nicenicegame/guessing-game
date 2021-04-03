@@ -3,7 +3,7 @@
 const express = require('express')
 const MongoClient = require('mongodb').MongoClient
 const redis = require('redis')
-const gameRoute = require('./gameRoute')
+const gameRouter = require('./gameRouter')
 
 // Constants
 const PORT = 80 // App's port
@@ -14,18 +14,19 @@ const dbName = 'guessingGame' // MongoDB's Database Name
 // App
 const app = express()
 
-app.use(express.urlencoded({ extended: true }))
+app.set('view engine', 'ejs')
+app.use(express.urlencoded({ extended: false }))
 
-app.use('/', gameRoute)
+app.use('/', gameRouter)
 
-async function main() {
+const main = async () => {
   const client = new MongoClient(uri, { useUnifiedTopology: true })
   try {
     // Connect to the MongoDB cluster
     await client.connect()
     console.log('Connected successfully to MongoDB server')
 
-    // Get the test collection
+    // Get the guessingGame collection
     app.locals.db = client.db(dbName)
   } catch (e) {
     console.error(e)
